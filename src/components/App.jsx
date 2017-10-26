@@ -12,13 +12,17 @@ class App extends React.Component {
     this.successFunction = this.successFunction.bind(this);
     this.searchHandler = this.searchHandler.bind(this);
     
-    if (props.searchYouTube) {
-      this.searchYouTube = props.searchYouTube;
-    }
-    
-    this.searchYouTube('', this.successFunction);
+    this.search('');
   }
 
+  search(query) {
+    var options = {
+      key: window.YOUTUBE_API_KEY,
+      query: query,
+      max: 10
+    };
+    this.props.searchYouTube(options, this.successFunction);
+  }
   
   clickTitleHandler(selectedVideoIndex, e) {
     this.setState({
@@ -27,30 +31,17 @@ class App extends React.Component {
   }
   
   searchHandler(e) {
-    console.log(e.target.value);
-    this.searchYouTube(e.target.value, this.successFunction);
+    this.search(e.target.value);
   }
   
   successFunction(videoData) {
     this.setState({
       videos: videoData,
-      currentVideo: videoData[0] // used to be 0
+      currentVideo: videoData[0] 
     });
   }
   
-  searchYouTube(query, callback) {
-    var options = {
-      key: window.YOUTUBE_API_KEY,
-      query: query,
-      max: 10
-    };
-    searchYouTube(options, callback);
-  }
-  
   render() {
-    // console.log('videos: ', this.state.videos);
-    // console.log('currentVideo: ', this.state.currentVideo);
-    // var currentVideo = this.state.videos.
     return (
       <div>
         <nav className="navbar">
@@ -70,6 +61,10 @@ class App extends React.Component {
     );
   }
 }
+
+App.propTypes = {
+  searchYouTube: React.PropTypes.function.isRequired
+};
 
 // In the ES6 spec, files are "modules" and do not share a top-level scope
 // `var` declarations will only exist globally where explicitly defined
